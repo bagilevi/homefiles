@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+STDOUT.sync = true
+STDERR.sync = true
+
+
+class File
+  def flocked?
+    status = flock LOCK_EX|LOCK_NB
+    case status
+      when false
+        return true
+      when 0
+        flock LOCK_UN
+        return false
+      else
+        raise SystemCallError, status
+    end
+  end
+end
+
+def watch_dir dir, ext = '*', &block
+  $dirs_to_watch << [dir, ext, block]
+end
+
+def watch_dirs base_dir, dirs_to_watch
+  watching = "Watching #{dirs_to_watch.inspect}..."
+  puts watching
+  loop do
+    dirs_to_watch.each do |dir|
+      ext = '*'
+
+      files = Dir["#{base_dir}/#{dir}/*.#{ext}"]
+      if files.any?
+        files.each do |filename|
+          filename = filename[/[^\/]+$/]
+          puts "Detected #{filename}..."
+          if File.new("#{base_dir}/#{dir}/#{filename}").flocked?
+            puts "#{filename} locked"
+          else
+            Video.new(base_dir, filename).send("process_#{dir}")
+          end
+        end
+        puts
+        puts watching
+      else
+        sleep 1
+      end
+    end
+  end
+end
+
+class Video
+  attr_reader :base, :fn
+
+  def initialize base, fn
+    @base, @fn = base, fn
+  end
+
+  # Move this file from a specified directory to another
+  def move from, to
+    `mv #{f(from)} #{f(to)}`
+  end
+
+  # Full path of this file using the specified directory
+  def f dir
+    "#{base}/#{dir}/#{fn}"
+  end
+
+  def process_raw
+    move 'raw', 'downscale-in'
+    puts "Downscaling #{fn}..."
+    size = '640x360'
+    `ffmpeg -i #{f('downscale-in')} -s #{size} -b 2000k #{f('downscale-out')}`
+    move 'downscale-in', 'raw-processed'
+
+    move 'downscale-out', 'speedup-in'
+    puts "Speeding up #{fn}..."
+    speed = 2
+    `ffmpeg -i #{f('speedup-in')} -r #{25/speed} -f yuv4mpegpipe - | yuvfps -s 25:1 -r 25:1 | ffmpeg -f yuv4mpegpipe -i - -b 4000k #{f('speedup-out')}`
+    move 'speedup-out', 'cuttable'
+    `rm #{f('speedup-in')}`
+    puts "Processing of #{fn} finished."
+  end
+
+  def process_uploadable
+    puts "Moving #{fn} to uploaded"
+    move 'uploadable', 'uploading'
+    puts "Uploading #{fn}..."
+    `scp #{f('uploading')} root@common:/var/www/videos/uploading/#{fn}`
+    move 'uploading', 'uploaded'
+    `ssh root@common "mv /var/www/videos/uploading/#{fn} /var/www/videos/uploaded/#{fn}"`
+    puts "#{fn} uploaded."
+  end
+
+  def process_uploaded
+    puts "Moving #{fn}..."
+    move 'uploaded', 'convert-in'
+    new_filename = fn.gsub(/[^\.]+$/, 'ogg')
+    puts "Converting #{fn}..."
+    `ffmpeg -i #{f('convert-in')} -b 2000k #{base}/convert-out/#{new_filename}`
+    #`rm #{f('convert-in')}`
+    move 'convert-in', 'uploaded-processed'
+    puts "Publishing #{new_filename}..."
+    `mv #{base}/convert-out/#{new_filename} #{base}/public/#{new_filename}`
+    puts "#{new_filename} published."
+  end
+end
+
+
+case `hostname`.strip
+when 'levente.lan'
+  watch_dirs "/Users/levente/Desktop/video_proc", %w(raw uploadable)
+  #watch_dirs "/Users/levente/Desktop/video_proc", %w(uploadable)
+when 'li151-21'
+  watch_dirs "/var/www/videos", ['uploaded']
+else
+  puts "Unrecognized hostname #{`hostname`}"
+end

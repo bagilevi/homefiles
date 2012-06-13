@@ -1,0 +1,39 @@
+#!/usr/bin/ruby
+
+# Switch to a git branch by typing only part of the branch name.
+# If multiple branches found, prompts for a number.
+#
+# Type `b dev` instead of `git checkout development`
+
+pattern = ARGV[0]
+
+all_branches = `git branch`.split(/[\n\r]+/).map{|l|l.gsub(/^\* /,'')}.map(&:strip).reject{|l|l == ''}
+
+if pattern
+  matching_branches = all_branches.select{|b| b.include? pattern}
+else
+  matching_branches = all_branches
+end
+
+if matching_branches.empty?
+  puts "No branch matching #{pattern}"
+  choosable_branches = all_branches
+else
+  choosable_branches = matching_branches
+end
+
+branch = if choosable_branches.size == 1
+  choosable_branches.first
+else
+  puts choosable_branches.each_with_index.map{|b,i| "#{i+1}. #{b}"}.join("\n")
+  print "Enter the branch number > "
+  selected = $stdin.gets.to_i - 1
+  if selected >= 0 && selected <= choosable_branches.size-1
+    choosable_branches[selected]
+  end
+end
+
+if branch && branch.strip != ''
+  puts "Checking out #{branch.inspect}"
+  `git checkout #{branch}`
+end

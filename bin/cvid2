@@ -1,0 +1,58 @@
+#!/usr/bin/env ruby
+
+$dirs_to_watch = []
+
+class File
+  def flocked? &block
+    status = flock LOCK_EX|LOCK_NB
+    case status
+      when false
+        return true
+      when 0
+        flock LOCK_UN
+        return false
+      else
+        raise SystemCallError, status
+    end
+  end
+end
+
+def watch_dir dir
+  $dirs_to_watch << dir unless $dirs_to_watch.include? dir
+end
+
+def watch_dirs
+  loop do
+    puts "Checking..."
+    $dirs_to_watch.each do |dir|
+      Dir["#{dir}/*"].each do |filename|
+        puts "Detected #{filename}..."
+        if File.new("#{dir}/#{filename}").flocked?
+          puts "#{filename} locked"
+        else
+          yield filename
+        end
+      end
+    end
+    sleep 1
+  end
+end
+
+
+
+base_dir = "/var/www/video"
+
+watch_dir "#{base_dir}/uploaded" do |filename|
+  puts "Moving #{filename}..."
+  `mv #{base_dir}/uploaded/#{filename} #{base_dir}/converting-from/#{filename}`
+  new_filename = filename.gsub(/[^\.]+$/, 'ogg')
+  puts "Converting #{filename}..."
+  `ffmpeg -i #{base_dir}/converting-from/#{filename} #{base_dir}/converting-to/#{new_filename}`
+  puts "Publishing #{filename}..."
+  `mv #{base_dir}/converting-to/#{new_filename} #{base_dir}/public/#{new_filename}`
+  puts "#{filename} published."
+end
+
+
+
+watch_dirs

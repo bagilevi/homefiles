@@ -1,0 +1,1 @@
+kill -9 `ps ax | grep "$1" | grep -v grep |  sed 's/^ *\([0-9]*\)\ .*$/\1/'`

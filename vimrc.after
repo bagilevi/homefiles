@@ -1,0 +1,289 @@
+
+"highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
+" OverLength /\%81v.*/
+
+call pathogen#infect()
+
+let g:ruby_doc_command='open'
+let g:ruby_doc_ruby_mapping=',rb'
+let g:ruby_doc_rspec_mapping=',rs'
+let g:ruby_doc_rails_mapping=',rr'
+
+
+set guifont=DejaVu\ Sans\ Mono\ 8
+set nocompatible
+
+set number
+set ruler
+syntax on
+
+" Whitespace stuff
+set nowrap
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
+set list listchars=tab:\ \ ,trail:·
+
+" Searching
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+
+" Tab completion
+set wildmode=list:longest,list:full
+set wildignore+=*.o,*.obj,.git,*.rbc
+
+" Status bar
+set laststatus=2
+
+" Without setting this, ZoomWin restores windows in a way that causes
+" equalalways behavior to be triggered the next time CommandT is used.
+" This is likely a bludgeon to solve some other issue, but it works
+set noequalalways
+
+" NERDTree configuration
+let NERDTreeIgnore=['\.rbc$', '\~$']
+map <Leader>n :NERDTreeToggle<CR>
+autocmd vimenter * NERDTree
+autocmd VimEnter * wincmd p
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+let NERDTreeMouseMode=3
+
+" Command-T configuration
+let g:CommandTMaxHeight=20
+
+" ZoomWin configuration
+map <Leader><Leader> :ZoomWin<CR>
+
+" CTags
+map <Leader>rt :!ctags --extra=+f -R *<CR><CR>
+
+" Remember last location in file
+if has("autocmd")
+ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$")
+   \| exe "normal g'\"" | endif
+endif
+
+function s:setupWrapping()
+ set wrap
+ set wm=2
+ set textwidth=72
+endfunction
+
+function s:setupMarkup()
+ call s:setupWrapping()
+ map <buffer> <Leader>p :Mm <CR>
+endfunction
+
+" make and python use real tabs
+au FileType make                                     set noexpandtab
+au FileType python                                   set noexpandtab
+
+" Thorfile, Rakefile and Gemfile are Ruby
+au BufRead,BufNewFile {Gemfile,Rakefile,Thorfile,config.ru}    set ft=ruby
+
+" md, markdown, and mk are markdown and define buffer-local preview
+au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn} call s:setupMarkup()
+
+au BufRead,BufNewFile *.txt call s:setupWrapping()
+
+" allow backspacing over everything in insert mode
+set backspace=indent,eol,start
+
+" load the plugin and indent settings for the detected filetype
+filetype plugin indent on
+
+" Opens an edit command with the path of the currently edited file filled in
+" Normal mode: <Leader>e
+map <Leader>e :e <C-R>=expand("%:p:h") . "/" <CR>
+
+" Opens a tab edit command with the path of the currently edited file filled in
+" Normal mode: <Leader>t
+map <Leader>te :tabe <C-R>=expand("%:p:h") . "/" <CR>
+
+" Inserts the path of the currently edited file into a command
+" Command mode: Ctrl+P
+cmap <C-P> <C-R>=expand("%:p:h") . "/" <CR>
+
+" Unimpaired configuration
+" Bubble single lines
+nmap <C-Up> [e
+nmap <C-Down> ]e
+" Bubble multiple lines
+vmap <C-Up> [egv
+vmap <C-Down> ]egv
+
+" Use modeline overrides
+set modeline
+set modelines=10
+
+" Default color scheme
+color desert
+
+" Include user's local vim config
+if filereadable(expand("~/.vimrc.local"))
+ source ~/.vimrc.local
+endif
+
+map <C-J> <C-W>j
+map <C-K> <C-W>k
+map <C-H> <C-W>h
+map <C-L> <C-W>l
+
+
+" from K
+nnoremap <up> <nop>
+nnoremap <down> <nop>
+nnoremap <left> <nop>
+nnoremap <right> <nop>
+inoremap <up> <nop>
+inoremap <down> <nop>
+inoremap <left> <nop>
+inoremap <right> <nop>
+nnoremap j gj
+nnoremap k gk
+
+set cursorline
+hi CursorLine guibg=#111111
+set ttyfast
+set ruler
+set laststatus=2
+
+set nowrap
+set textwidth=79
+set formatoptions=qrn1
+au FocusLost * :wa
+
+if has("gui_macvim")
+ set colorcolumn=85
+ hi ColorColumn guibg=#070000
+end
+
+inoremap jdef def<Enter>end<Enter><Esc>kkA<Space>
+
+
+" from http://stackoverflow.com/questions/164847/what-is-in-your-vimrc
+
+" This is totally awesome - remap jj to escape in insert mode.  You'll
+" never type jj anyway, so it's great!"
+inoremap jj <Esc>
+
+" Create Blank Newlines and stay in Normal mode
+nnoremap <silent> zj o<Esc>
+nnoremap <silent> zk O<Esc>
+
+
+
+
+" other
+"
+
+" Remove scrollbar
+set guioptions-=rL
+
+set background=dark
+colorscheme autumnleaf
+
+map <Leader>1 :colorscheme autumn<CR>
+map <Leader>2 :colorscheme autumnleaf<CR>
+map <Leader>3 :set background=light<CR>:colorscheme solarized<CR>
+map <Leader>4 :set background=dark<CR>:colorscheme solarized<CR>
+map <Leader>0 :hi ColorColumn guibg=#070000<CR>
+
+
+" https://github.com/ecomba/vim-ruby-refactoring
+:nnoremap <leader>rap  :RAddParameter<cr>
+:nnoremap <leader>rcpc :RConvertPostConditional<cr>
+:nnoremap <leader>rel  :RExtractLet<cr>
+:vnoremap <leader>rec  :RExtractConstant<cr>
+:vnoremap <leader>relv :RExtractLocalVariable<cr>
+:nnoremap <leader>rit  :RInlineTemp<cr>
+:vnoremap <leader>rrlv :RRenameLocalVariable<cr>
+:vnoremap <leader>rriv :RRenameInstanceVariable<cr>
+:vnoremap <leader>rem  :RExtractMethod<cr>
+
+
+" fold text between context and specify
+function! ShowRSpecContext()
+ let spec_idx = search('specify\s\+".\+"', 'Wbn', '^')
+ let ctx_idx  = search('context\s\+".\+"', 'Wbn', '^')
+ if spec_idx && ctx_idx
+   exec (ctx_idx+1).','.(spec_idx-1).'fold'
+ endif
+endfunction
+
+" fold text between all contexts and specify lines
+function! ShowRSpecAnnotation()
+call cursor('$', 0)
+try
+  foldo!
+catch
+endtry
+let cur_line = line('$')
+while cur_line > 0
+  let prev_spec = search('\(context\|specify\)\s\+".\+"', 'Wb', '^')
+  if ! prev_spec
+    break
+  endif
+  exec (prev_spec).','.cur_line.'fold'
+  let cur_line=prev_spec-1
+endwhile
+endfunction
+command! Sx :call ShowRSpecContext()
+command! Sa :call ShowRSpecAnnotation()
+
+" transfer/read and write one block of text between vim sessions
+" Usage:
+" 'from' session:
+" ma
+" move to end-of-block
+" xw
+"
+" 'to' session:
+" move to where I want block inserted
+" xr
+"
+if has("unix")
+ nmap ,v :r $HOME/.vimxfer<CR>
+ nmap ,c :'a,.w! $HOME/.vimxfer<CR>
+ vmap ,v c<Esc>:r $HOME/.vimxfer<CR>
+ vmap ,c :w! $HOME/.vimxfer<CR>
+else
+ nmap ,v :r c:/.vimxfer<CR>
+ nmap ,c :'a,.w! c:/.vimxfer<CR>
+ vmap ,v c<Esc>:r c:/.vimxfer<CR>
+ vmap ,c :w! c:/.vimxfer<CR>
+endif
+
+if has("gui_running")
+  set guioptions=egmrt
+endif
+
+set noerrorbells visualbell t_vb=
+autocmd GUIEnter * set visualbell t_vb=
+
+map <C-t> :CommandT<CR>
+map <A-t> :CommandT<CR>
+
+let g:ctrlp_use_caching = 0
+
+
+map <Leader>; :tabp <CR>
+map <Leader>' :tabn <CR>
+
+map <C-t> :CtrlP <CR>
+
+map <Leader>ge :e Gemfile <CR>
+map <Leader>gl :e Gemfile.lock <CR>
+
+map <Leader>ro :e config/routes.rb <CR>
+map <Leader>in :e config/initializers/
+map <Leader>co :e app/controllers/
+map <Leader>mo :e app/models/
+map <Leader>vi :e app/views/
+map <Leader>sp :e spec/
+map <Leader>sc :e db/schema.rb <CR>
+map <Leader>mi :e db/migrations/
+

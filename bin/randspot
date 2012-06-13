@@ -1,0 +1,2 @@
+cd $PICKLIVE_DIR/football3s-integration/ruby-client
+ruby -rubygems -I.:lib ./random-spotting.rb "http://picklive:m0nk3y5@spotting-staging.picklive.com/" $1 $2

@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+echo -n "Password for volume '$1': "
+stty -echo
+read password
+stty echo
+echo ""         # force a carriage return to be output
+
+truecrypt -t --mount $1 -p $password --non-interactive

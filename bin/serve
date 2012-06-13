@@ -1,0 +1,1 @@
+PORT=$1 ruby -rwebrick -e"s = WEBrick::HTTPServer.new(:Port => (ENV['PORT'] || 3000), :DocumentRoot => Dir.pwd); trap('INT') { s.shutdown }; s.start"

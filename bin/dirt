@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /Users/levente/Code/my/dirt/client
+./dirt $1 $2 $3 $4 $5

@@ -1,0 +1,3 @@
+rake db:schema:load
+rake db:schema:load RAILS_ENV=test
+rake db:seed GAMES=3 USERS=3

@@ -1,0 +1,4 @@
+tail ~/commit_messages.txt
+git log --committer=Levente
+
+

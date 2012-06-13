@@ -1,0 +1,5 @@
+cd /Users/levente/Code/picklive/wiki/code/git-wiki
+rvm use 1.8.7
+
+echo "Starting server..."
+./run.ru -p 3434

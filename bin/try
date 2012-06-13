@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ $1 ]; then
+  FILENAME="$1"
+fi
+
+if [ -z $1 ]; then
+  FILENAME="try"
+fi
+
+FILENAME="$HOME/Code/try/$FILENAME.rb"
+
+if [ ! -e $FILENAME ]; then
+  touch $FILENAME
+  echo "#!/usr/bin/ruby" > $FILENAME 
+fi
+
+mate $FILENAME 

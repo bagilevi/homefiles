@@ -1,0 +1,13 @@
+knife cookbook upload picklive
+knife node edit picklive-008.vm.brightbox.net
+knife role from file roles/email-sender.json
+
+knife cookbook upload picklive
+knife cookbook upload -a   # upload all
+vim ~/.chef/knife.rb
+
+gem uninstall chef -v 0.9.6
+gem install chef -v 0.8.16
+
+sudo chef-client -l debug
+

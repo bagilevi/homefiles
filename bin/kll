@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+pattern = ARGV[0]
+
+processes = `ps -A | grep #{pattern}`.split("\n").map do |line|
+  line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(.*)$/
+  [$1, $5]
+end
+
+killable_pids = processes.select do |process|
+  process[1] =~ /^#{pattern}/
+end.map{|p|p[0]}
+
+killable_pids.each do |pid|
+  `kill #{pid}`
+end

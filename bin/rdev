@@ -1,0 +1,11 @@
+export branch=$(git branch | grep ^*|sed s/\*\ //)
+echo "Checking out development..."
+git checkout development
+echo "Pulling..."
+git pull
+echo "Checking out $branch..."
+git checkout $branch
+echo "Rebasing..."
+git rebase development
+echo "Voila!"
+

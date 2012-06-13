@@ -1,0 +1,2 @@
+git commit -a -m "$1"
+echo "$1" >> ~/commit_messages.txt

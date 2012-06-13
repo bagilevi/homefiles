@@ -1,0 +1,13 @@
+cd $PICKLIVE_DIR/football3s-integration/ruby-client
+export PASSWORD="meDIa28pf"
+export MATCH=$1
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 0 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 10 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 20 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 30 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 40 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 50 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 60 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 70 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 80 levente &
+ruby -rubygems -I.:lib ./client_changes.rb "$PASSWORD" "https://picklive:m0nk3y5@staging.picklive.com/" 10 10 10 $MATCH 90 levente &

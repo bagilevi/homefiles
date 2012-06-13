@@ -1,0 +1,8 @@
+#!/bin/sh
+cd ~/Code/my/diaspora/diaspora
+git checkout master
+git pull official master
+git checkout londondiaspora
+git merge master
+git push origin londondiaspora
+ssh -t londondiaspora.org "sudo chef-client && sudo sv restart diaspora-thin-3001 && sudo /etc/init.d/mysql restart"

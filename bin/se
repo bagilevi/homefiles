@@ -1,0 +1,68 @@
+#!/usr/bin/ruby
+
+class Service
+  attr_accessor :name
+  def initialize(params)
+    @name = params[:name]
+  end
+end
+
+class RunsvService < Service
+  def initialize(params)
+    super(params)
+    @path = params[:path]
+  end
+  
+  def status
+    `sv status #{@path}`
+  end
+
+  def start
+    `sv start #{@path}`
+  end
+
+  def stop
+    `sv stop #{@path}`
+  end
+
+  def restart
+    `sv restart #{@path}`
+  end
+
+end
+
+services = []
+
+# Runsv services
+services +=
+  `ls ~/services/ | cat`.split("\n").map do |line|
+    RunsvService.new(
+      :name => line, 
+      :path => "~/services/#{line}" 
+    )
+  end
+
+
+loop do
+  puts "Services:"
+  services.each_with_index do |service, index|
+    puts "#{(index+1).to_s.rjust(2)}. #{service.name.ljust(30)} #{service.status.ljust(40)}"
+  end
+  puts "Usage: <command> <no>"
+  puts "Commands: start, stop, restart"
+  print "> "; $stdout.flush
+  input = gets.strip
+  puts
+  if input =~ /^(start|stop|restart)\s+(\d+)$/
+    command, no = $1, $2.to_i
+    if services[no-1]
+      output = services[no-1].send(command)
+      puts output
+    else
+      puts "No service with no #{no}"
+    end
+  else
+    puts "Invalid command."
+  end
+  puts
+end

@@ -1,0 +1,9 @@
+#!/usr/bin/ruby
+files = Dir.glob("features/**/*.feature").select{|f| File.read(f) =~ /show me the page/}
+unless files.empty?
+  puts "\n-------------------------------------------------------------------------"
+  puts "Remove 'show me the page' from:"
+  puts files.map{|f| " - #{f}"}.join("\n")
+  puts "-------------------------------------------------------------------------\n\n"
+end
+
