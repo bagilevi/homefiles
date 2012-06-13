@@ -1,0 +1,87 @@
+export EDITOR="mvim -f"
+#!/bin/sh
+#alias branch="(git branch &>/dev/null; if [ \$? -eq 0 ]; then echo \"\$(git branch | grep ^*|sed s/\*\ //)\"; fi)"
+alias glog="git log --pretty=format:\"%h%x09%an%x09%ad%x09%\"\"s\" --graph --date=short"
+alias glast="glog -n 1"
+alias glme="glog --author=Levente"
+alias mig="bundle exec rake db:migrate && bundle exec rake db:migrate RAILS_ENV=test"
+alias gits="cleanup && git status"
+alias gs="cleanup && git status"
+alias gpo="git push origin"
+alias gplo="git pull --rebase origin"
+alias gpush="git push origin \`git branch | grep ^*|sed s/\*\ //\`"
+alias gpull="git pull origin \`git branch | grep ^*|sed s/\*\ //\`"
+alias wtf="top -o cpu"
+alias be="bundle exec"
+alias cuke="bundle exec cucumber --require features"
+alias rk="bundle exec rake"
+alias rb="bundle exec ruby"
+
+alias r8="rvm use 1.8.7"
+alias r9="rvm use 1.9.3"
+
+
+#alias gitca="git commit -a -m"
+#alias gitc="git commit -m"
+alias gitd="cleanup && git diff"
+alias gitdc="cleanup && git diff --cached"
+alias sc="bundle exec ./script/console"
+alias serv="bundle exec ./script/server"
+alias srv="bundle exec ./script/server"
+alias ss="rm -Rf log/*; touch log/development.log; bundle exec ./script/server"
+alias sg="bundle exec script/generate"
+alias sgc="bundle exec script/generate rspec_controller"
+alias sgmig="bundle exec script/generate migration"
+alias gc="git commit"
+alias gamd="git commit --amend"
+alias gco="git checkout"
+alias gcd="git checkout development"
+alias gull="git pull --rebase origin"
+alias gush="git push origin"
+alias gimme="git pull --rebase origin \$(branch)"
+alias givem="git push origin \$(branch)"
+alias givemm="gimme && givem"
+alias gullsh="gull && gush"
+alias gulld="git pull --rebase origin development"
+alias gushd="git push origin development"
+alias gullshd="gulld && gushd"
+alias ga="git stash"
+alias gaa="git stash apply"
+alias psg="ps -A | grep "
+alias testall="check_showpage && rake db:reset RAILS_ENV=test && spec spec && rake test && kitty"
+alias r=rails
+alias g=git
+
+alias tl="tail -f log/"
+alias tlc="tail -f log/cucumber.log"
+alias tlb="tail -f log/bot_logger.log"
+alias tld="tail -f log/development.log"
+alias tlt="tail -f log/test.log"
+
+alias tunnel="ssh -R 3000:localhost:3000 178.79.158.131"
+alias btunnel="ssh -N -R 8890:localhost:8890 178.79.158.131"
+
+alias bashp="basp"
+
+alias dbre="rake db:drop:all db:create:all db:migrate"
+
+alias h="heroku"
+alias hl="heroku run --remote production"
+alias hs="heroku run --remote staging"
+alias hllog="heroku logs --remote production"
+alias hslog="heroku logs --remote staging"
+alias hrelease="git push production master && hl rake db:migrate"
+alias hstage="git push staging master && hs rake db:migrate"
+alias hdstage="git push staging development:master && hs rake db:migrate"
+
+function git.branch {
+  br=`git branch | grep "*"`
+  echo ${br/* /}
+}
+alias branch="git.branch"
+
+export DEVELOPMENT_MACHINE=yes
+
+export PATH=$PATH:~/bin
+
+[[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
